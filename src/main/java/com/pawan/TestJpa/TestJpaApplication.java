@@ -38,15 +38,14 @@ public class TestJpaApplication {
 	}
 
 	public static void main(String[] args) {
-		 	SpringApplication app = new SpringApplication(TestJpaApplication.class);
-	        SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
-	        addDefaultProfile(app, source);
-	        Environment env = app.run(args).getEnvironment();
-	        log.info("\n----------------------------------------------------------\n\t" +
-	                "Application '{}' is running! Access URLs:\n\t" +
-	                "Local: \t\thttp://127.0.0.1:{}\n\t",
-	            env.getProperty("spring.application.name"),
-	            env.getProperty("server.port"));
+		SpringApplication app = new SpringApplication(TestJpaApplication.class);
+		SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
+		addDefaultProfile(app, source);
+		Environment env = app.run(args).getEnvironment();
+		log.info(
+				"\n----------------------------------------------------------\n\t"
+						+ "Application '{}' is running! Access URLs:\n\t" + "Local: \t\thttp://127.0.0.1:{}\n\t",
+				env.getProperty("spring.application.name"), env.getProperty("server.port"));
 	}
 
 	private static void addDefaultProfile(SpringApplication app, SimpleCommandLinePropertySource source) {
@@ -56,5 +55,7 @@ public class TestJpaApplication {
 			app.setAdditionalProfiles(AppConstants.SPRING_PROFILE_DEVELOPMENT);
 		}
 	}
+
+	
 
 }

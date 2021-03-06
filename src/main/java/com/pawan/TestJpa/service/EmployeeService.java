@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.pawan.TestJpa.ApplicationContextProvider;
 import com.pawan.TestJpa.domain.Employee;
 import com.pawan.TestJpa.repo.EmployeeRepository;
+import com.pawan.TestJpa.service.type.TestIOC;
 
 @Service
 public class EmployeeService {
@@ -25,6 +26,24 @@ public class EmployeeService {
 
 	@Autowired
 	private EntityManager em;
+	
+	@Autowired
+	@Qualifier("ABC")
+	private TestIOC testIOC;
+	
+	@Autowired
+	@Qualifier("testIOCB")
+	private TestIOC testIOC2;
+	
+	
+	@PostConstruct
+	private void Show() {
+		testIOC.mydefault();
+		testIOC.showMe();
+		testIOC2.showMe();
+		
+		
+	}
 	
 	@Transactional
 	public Employee post(Employee employee) {
@@ -39,7 +58,10 @@ public class EmployeeService {
 	}
 
 	public List<Employee> getAll(String empName) {
-
+		
+		//ApplicationContextProvider.getContext().getBean(TestIOC.class).showMe();
+		ApplicationContextProvider.getContext().getBean("ABC", TestIOC.class).showMe();
+		
 		if (empName != null) {
 			// return employeeRepository.findByEmpName(empName);
 
