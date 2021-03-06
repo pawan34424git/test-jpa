@@ -2,6 +2,8 @@ package com.pawan.TestJpa.rest;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +39,10 @@ public class EmployeeResource {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Employee>> getAll() {
+	public ResponseEntity<List<Employee>> getAll(HttpServletRequest request) {
 		try {
-			return new ResponseEntity<>(employeeService.getAll(), HttpStatus.OK);
+			String empName = request.getParameter("empName");
+			return new ResponseEntity<>(employeeService.getAll(empName ), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
