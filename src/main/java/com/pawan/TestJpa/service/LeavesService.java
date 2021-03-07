@@ -1,13 +1,18 @@
 package com.pawan.TestJpa.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +35,23 @@ public class LeavesService {
 		return new Leaves(leaves, true);
 	}
 
-	public List<Leaves> getAll(String employeeId) {
+	public List<Leaves> getAll(String employeeId) throws SQLException {
 
 		Session session = (Session) em.getDelegate();
-		List<Leaves> list = null;
-		
+
+		 
+			List<Leaves> list = new ArrayList<>();
+
+			if (employeeId != null) {
+				Connection conn = ((SessionImpl)session).connection();
+				PreparedStatement stmt = conn.prepareStatement("select id,employee_id,day from jpa_3.leaves where employee_id=?"); // connect seprate database
+				stmt.setInt(1, Integer.valueOf(employeeId));
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					list.add(new Leaves(rs.getInt("id"), rs.getString("day"), null, rs.getInt("employee_id"), null));
+				}
+				if(!list.isEmpty()) return list;
+			} 
 		if (employeeId != null) {
 			list = session.createQuery("FROM Leaves E join fetch E.employee A where A.id=:employeeId", Leaves.class)
 							.setParameter("employeeId", Integer.valueOf(employeeId))
