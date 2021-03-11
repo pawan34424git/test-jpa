@@ -1,8 +1,10 @@
 package com.pawan.TestJpa.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,7 @@ public class EmployeeResource {
 	private EmployeeService employeeService;
 
 	@PostMapping
-	public ResponseEntity<Employee> post(@RequestBody Employee employee) {
+	public ResponseEntity<Employee> post(@Valid @RequestBody Employee employee) {
 
 		try {
 			return new ResponseEntity<>(employeeService.post(employee), HttpStatus.OK);
@@ -63,10 +65,10 @@ public class EmployeeResource {
 	}
 
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<Employee> patch(@PathVariable Integer id, @RequestBody Employee employee) {
+	public ResponseEntity<Employee> patch(@PathVariable Integer id, @RequestBody Map<String,Object> map) {
 
 		try {
-			return new ResponseEntity<>(employeeService.patch(id, employee), HttpStatus.OK);
+			return new ResponseEntity<>(employeeService.patch(id, map), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -74,7 +76,7 @@ public class EmployeeResource {
 	}
 
 	@PutMapping
-	public ResponseEntity<Employee> put(@RequestBody Employee employee) {
+	public ResponseEntity<Employee> put(@Valid @RequestBody Employee employee) {
 
 		try {
 			return new ResponseEntity<>(employeeService.put(employee), HttpStatus.OK);

@@ -25,11 +25,13 @@ public class LeavesService {
 
 	@Autowired
 	private EntityManager em;
+	
+	
 
 	public Leaves post(Leaves leaves) {
 
 		Session session = (Session) em.getDelegate();
-		leaves.setEmployee(new Employee(leaves.getEmployeeId(), null, null, null));
+		leaves.setEmployee(new Employee(leaves.getEmployeeId()));
 		Integer id = (Integer) session.save(leaves);
 		leaves = session.find(Leaves.class, id);
 		return new Leaves(leaves, true);
@@ -78,6 +80,9 @@ public class LeavesService {
 			if (leaves.getDay() != null) {
 				leavesExisting.setDay(leaves.getDay());
 			}
+			
+			 
+			 
 			session.update(leavesExisting);
 			return new Leaves(leavesExisting, true);
 		} else {

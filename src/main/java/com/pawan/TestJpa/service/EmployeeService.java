@@ -1,12 +1,17 @@
 package com.pawan.TestJpa.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,11 @@ public class EmployeeService {
 	@Qualifier("testIOCB")
 	private TestIOC testIOC2;
 	
+	private Validator validator;
+	
+	public EmployeeService(ValidatorFactory factory ) {
+		 this.validator = factory.getValidator();
+	}
 	
 	@PostConstruct
 	private void Show() {
@@ -84,14 +94,28 @@ public class EmployeeService {
 		return employeeRepository.findById(id);
 	}
 
-	public Employee patch(Integer id, Employee employee) throws Exception {
+	public Employee patch(Integer id, Map<String,Object> map) throws Exception {
 		Optional<Employee> employeeExisting = get(id);
 
 		if (employeeExisting.isPresent()) {
-			Employee pathEmployee = employeeExisting.get();
-			if (employee.getEmpName() != null) {
-				pathEmployee.setEmpName(employee.getEmpName());
+			final Employee pathEmployee = employeeExisting.get();
+			map.forEach((key,value)->{
+				switch (key) {
+				case "email":
+					pathEmployee.setEmail((String)value);
+					break;
+				case "empName":
+					pathEmployee.setEmpName((String)value);
+					break;
+				default:
+					break;
+				}
+			}); 
+			Set<ConstraintViolation<Employee>> violations = validator.validate(pathEmployee); 
+			for (ConstraintViolation<Employee> constraintViolation : violations) {
+				throw new Exception(constraintViolation.getMessage());
 			}
+			
 			return employeeRepository.save(pathEmployee);
 		} else {
 			throw new Exception("not found");
