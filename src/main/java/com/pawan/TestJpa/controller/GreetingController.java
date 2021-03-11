@@ -20,14 +20,14 @@ public class GreetingController {
 		Employee employee = new Employee();
 		employee.setEmpName("Aaaa");
 		model.addAttribute("employee", employee);
-		return "greeting";
+		return "greeting-pages/greeting";
 	}
 
 	@PostMapping(value = "/greeting",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String post(Employee employee, Model model) {
 		model.addAttribute("name", employee.getEmpName());
 		model.addAttribute("employee", employee);
-		return "greeting";
+		return "greeting-pages/greeting";
 	}
 
 }
